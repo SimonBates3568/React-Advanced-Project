@@ -1,0 +1,49 @@
+1. Update Input Fields on Event Page Edit Modal
+    - [ ] Ensure category fields use a dropdown.
+    - [ ] Prevent invalid data entry.
+    - [ ] Consider creating a single modal component for event creation/editing.
+    - [x] Ensure date fields use a date picker.
+
+
+1. Set Default Category for Events
+    - [ ] Assign a default category from the dataset when an event is created.
+
+1. Fix Date Parsing Issues
+    - [x] Ensure start and end time fields parse correctly.
+    - [x] Display dates in the correct format to allow seamless editing.
+
+1. Fix Redirection After Deleting an Event
+    - [x] Ensure the user is redirected to [domain]/ instead of [domain]/events to prevent 404 errors.
+
+1. Remove 'Event' Tab in Navigation
+    - [x] The tab currently redirects to [domain]/event/1, which may not exist.
+    - [x] Remove this tab to avoid confusion and 404 errors.
+
+
+
+
+⚡ Should Haves:
+1. Show 'No Events Found' Message
+    - [x] Display a message when no events match a search query.
+
+1. Allow Location Specification During Event Creation
+    - [x] Enable users to set a location when creating an event, not just when editing.
+
+
+
+✨ Nice to Haves:
+1. Improve Card Responsiveness
+    - [x] Ensure event cards are centered at certain resolutions to avoid excessive whitespace.
+
+1. Show Toast Notification on Event Creation
+    - [x] Display a confirmation message (e.g., "Created the event!") when an event is successfully added.
+
+1. Replace <strong> Tags in Chakra <Text> Components
+    - [x] Use the fontWeight prop instead of <strong> for bold text.
+
+1. Improve UX with Clickable Event Cards
+    - [x] Allow users to click on the title or entire card to navigate to the event page.
+
+1. Move 'Add Event' Button to the Header
+    - [x] Place the "Add Event" button in the header so it's always accessible without scrolling.
+

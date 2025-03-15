@@ -11,7 +11,11 @@ export const Navigation = () => {
             Events
           </Link>
         </Box>
-      
+        <Box as="li" m={2}>
+          <Link as={RouterLink} to="/event/1" color="white" fontSize={["sm", "md", "lg"]}>
+            Event
+          </Link>
+        </Box>
       </Flex>
     </Box>
   );

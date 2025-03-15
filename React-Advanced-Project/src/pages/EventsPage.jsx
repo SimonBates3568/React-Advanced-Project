@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, Heading, Box, Button, Input, FormControl, FormLabel, Stack, Text, Select, Flex, SimpleGrid, useToast } from '@chakra-ui/react';
+import { Image, Heading, Box, Button, Input, FormControl, FormLabel, Stack, Text, Select, Flex, SimpleGrid } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 
 export const EventsPage = () => {
@@ -16,13 +16,9 @@ export const EventsPage = () => {
     image: '',
     startTime: '',
     endTime: '',
-    category: '',
-    location: ''
+    category: ''
   });
 
-  const toast = useToast();
-
-  // fetch events
   useEffect(() => {
     async function fetchData() {
       const response = await fetch('http://localhost:3001/events');
@@ -32,39 +28,16 @@ export const EventsPage = () => {
     fetchData();
   }, []);
 
-  // fetch categories
   useEffect(() => {
     async function fetchCategories() {
-      try {
-        const response = await fetch('http://localhost:3001/categories');
-        const data = await response.json();
-        setCategories(data);
-        if (data.length > 0) {
-          setNewEvent((prevEvent) => ({
-            ...prevEvent,
-            category: prevEvent.category || data[0].id
-          }));
-        }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
+      const response = await fetch('http://localhost:3001/categories');
+      const data = await response.json();
+      setCategories(data);
     }
     fetchCategories();
   }, []);
 
-  // open and close modal
-  const handleOpen = () => {
-    setIsOpen(true);
-    setNewEvent({
-      title: '',
-      description: '',
-      image: '',
-      startTime: '',
-      endTime: '',
-      category: categories.length > 0 ? categories[0].id : '',
-      location: ''
-    });
-  };
+  const handleOpen = () => setIsOpen(true);
   const handleClose = () => {
     setIsOpen(false);
     setIsEdit(false);
@@ -74,12 +47,10 @@ export const EventsPage = () => {
       image: '',
       startTime: '',
       endTime: '',
-      category: categories.length > 0 ? categories[0].id : '',
-      location: ''
+      category: ''
     });
   };
 
-  // handle change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewEvent((prevEvent) => ({
@@ -88,17 +59,14 @@ export const EventsPage = () => {
     }));
   };
 
-  // handle search change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // handle category change
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
   };
 
-  // handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isEdit) {
@@ -123,16 +91,8 @@ export const EventsPage = () => {
       setEvents((prevEvents) => [...prevEvents, data]);
     }
     handleClose();
-    toast({
-      title: "Event Created.",
-      description: "Created the event!.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
   };
 
-  // handle edit
   const handleEdit = (event) => {
     setIsEdit(true);
     setCurrentEventId(event.id);
@@ -147,54 +107,48 @@ export const EventsPage = () => {
     handleOpen();
   };
 
-  // filter events
   const filteredEvents = events.filter(event =>
     (selectedCategory === 'All' || event.category === selectedCategory) &&
     (event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     event.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  // check if no events match the search query
-  const noEventsMessage = filteredEvents.length === 0 ? 'No events match your search criteria.' : '';
-
   return (
     <Box p={4} display="flex" flexDirection="column" alignItems="center">
       <Heading mb={4}>List of Events</Heading>
-      <Flex mb={4} width="100%" maxWidth="600px" justifyContent="center" alignItems="center">
+      <Flex mb={4} width="100%" maxWidth="600px" justifyContent="center">
         <Input
           placeholder="Search events"
           value={searchQuery}
           onChange={handleSearchChange}
           mr={4}
         />
-        <Select placeholder="Select category" value={selectedCategory} onChange={handleCategoryChange} mr={4}>
+        <Select placeholder="Select category" value={selectedCategory} onChange={handleCategoryChange}>
           <option value="All">All</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>{category.name}</option>
           ))}
         </Select>
-        <Button colorScheme="teal" onClick={handleOpen} p={6}>Add Event</Button>
       </Flex>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} width="100%" maxWidth="1200px">
         {filteredEvents.map((event) => (
-          <Link to={`/event/${event.id}`} key={event.id}>
-            <Box p={4} borderWidth="1px" borderRadius="lg" boxShadow="md" textAlign="center">
-              <Heading size="md" mb={2}>{event.title}</Heading>
-              <Text mb={2} fontWeight="bold">{event.description}</Text>
-              <Image src={event.image} alt="image" boxSize="300px" objectFit="cover" mb={2} mx="auto" />
-              <Text mb={2} fontWeight="bold">Start Time: {new Date(event.startTime).toLocaleString()}</Text>
-              <Text mb={2} fontWeight="bold">End Time: {new Date(event.endTime).toLocaleString()}</Text>
-              <Text mb={2} fontWeight="bold">
-                Category: {categories.find(cat => cat.id === event.category)?.name || 'Unknown'}
-              </Text>
-              <Flex justifyContent="center">
-                <Button colorScheme="yellow" onClick={(e) => { e.preventDefault(); handleEdit(event); }} p={6}>Edit</Button>
-              </Flex>
-            </Box>
-          </Link>
+          <Box key={event.id} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
+            <Heading size="md" mb={2}>{event.title}</Heading>
+            <Text mb={2}>{event.description}</Text>
+            <Image src={event.image} alt="image" boxSize="300px" objectFit="cover" mb={2} />
+            <Text mb={2}>Start Time: {event.startTime}</Text>
+            <Text mb={2}>End Time: {event.endTime}</Text>
+            <Text mb={2}>Category: {categories.find(cat => cat.id === event.category)?.name}</Text>
+            <Flex>
+              <Link to={`/event/${event.id}`}>
+                <Button colorScheme="teal" variant="link" mr={2}>View Details</Button>
+              </Link>
+              <Button colorScheme="yellow" onClick={() => handleEdit(event)}>Edit</Button>
+            </Flex>
+          </Box>
         ))}
       </SimpleGrid>
-      {noEventsMessage && <Text mt={4}>{noEventsMessage}</Text>}
+      <Button mt={4} colorScheme="teal" onClick={handleOpen}>Add Event</Button>
       
       {isOpen && (
         <Box className="popup" position="fixed" top="0" left="0" width="100%" height="100%" bg="rgba(0,0,0,0.5)" display="flex" justifyContent="center" alignItems="center">
@@ -223,10 +177,6 @@ export const EventsPage = () => {
                   <Input type="datetime-local" name="endTime" value={newEvent.endTime} onChange={handleChange} />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Location</FormLabel>
-                  <Input type="text" name="location" value={newEvent.location} onChange={handleChange} />
-                </FormControl>
-                <FormControl>
                   <FormLabel>Category</FormLabel>
                   <Select name="category" value={newEvent.category} onChange={handleChange}>
                     {categories.map((category) => (
@@ -234,9 +184,9 @@ export const EventsPage = () => {
                     ))}
                   </Select>
                 </FormControl>
-                <Flex justifyContent="center">
-                  <Button type="submit" colorScheme="blue" mr={2} p={6}>{isEdit ? 'Save Changes' : 'Submit'}</Button>
-                  <Button type="button" onClick={handleClose} p={6}>Close</Button>
+                <Flex>
+                  <Button type="submit" colorScheme="blue" mr={2}>{isEdit ? 'Save Changes' : 'Submit'}</Button>
+                  <Button type="button" onClick={handleClose}>Close</Button>
                 </Flex>
               </Stack>
             </form>
@@ -246,3 +196,5 @@ export const EventsPage = () => {
     </Box>
   );
 };
+
+export default EventsPage;
