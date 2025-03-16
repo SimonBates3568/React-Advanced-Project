@@ -178,7 +178,15 @@ export const EventsPage = () => {
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} width="100%" maxWidth="1200px">
         {filteredEvents.map((event) => (
           <Link to={`/event/${event.id}`} key={event.id}>
-            <Box p={4} borderWidth="1px" borderRadius="lg" boxShadow="md" textAlign="center">
+            <Box
+              p={4}
+              borderWidth="1px"
+              borderRadius="lg"
+              boxShadow="md"
+              textAlign="center"
+              transition="transform 0.2s"
+              _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+            >
               <Heading size="md" mb={2}>{event.title}</Heading>
               <Text mb={2} fontWeight="bold">{event.description}</Text>
               <Image src={event.image} alt="image" boxSize="300px" objectFit="cover" mb={2} mx="auto" />
