@@ -114,7 +114,7 @@ export const EventPage = ({ categories = [] }) => {
           <Text mb={2}><strong>Start Time:</strong> {event.startTime}</Text>
           <Text mb={2}><strong>End Time:</strong> {event.endTime}</Text>
           <Text mb={2}><strong>Location:</strong> {event.location}</Text>
-          <Text mb={2}><strong>Category:</strong> {categories.find(cat => cat.id === event.category)?.name || 'N/A'}</Text>
+          <Text mb={2}><strong>Category:</strong> {}</Text>
         </Box>
         <Box flex="1" maxW="300px">
           <Image src={event.image} alt={event.title} borderRadius="md" />
@@ -153,7 +153,7 @@ export const EventPage = ({ categories = [] }) => {
               <FormControl>
                 <FormLabel fontWeight="bold">Category</FormLabel>
                 <select name="category" value={formData.category} onChange={handleChange}>
-                  <option key="All" value="All">All</option>
+                  <option value="All">All</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>{category.name}</option>
                   ))}
