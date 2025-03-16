@@ -173,7 +173,7 @@ export const EventsPage = () => {
             <option key={category.id} value={category.id}>{category.name}</option>
           ))}
         </Select>
-        <Button colorScheme="teal" onClick={handleOpen} p={6}>Add Event</Button>
+        <Button colorScheme="teal" onClick={handleOpen} p={8}>Add Event</Button>
       </Flex>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} width="100%" maxWidth="1200px">
         {filteredEvents.map((event) => (
@@ -182,22 +182,26 @@ export const EventsPage = () => {
               p={4}
               borderWidth="1px"
               borderRadius="lg"
-              boxShadow="md"
+              boxShadow="lg"
               textAlign="center"
               transition="transform 0.2s"
-              _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+              _hover={{ transform: 'scale(1.05)', cursor: 'pointer', boxShadow: '2xl' }}
+              bg="white"
+              overflow="hidden"
             >
-              <Heading size="md" mb={2}>{event.title}</Heading>
-              <Text mb={2} fontWeight="bold">{event.description}</Text>
-              <Image src={event.image} alt="image" boxSize="300px" objectFit="cover" mb={2} mx="auto" />
-              <Text mb={2} fontWeight="bold">Start Time: {new Date(event.startTime).toLocaleString()}</Text>
-              <Text mb={2} fontWeight="bold">End Time: {new Date(event.endTime).toLocaleString()}</Text>
-              <Text mb={2} fontWeight="bold">
-                Category: {categories.find(cat => cat.id === event.category)?.name || 'Unknown'}
-              </Text>
-              <Flex justifyContent="center">
-                <Button colorScheme="yellow" onClick={(e) => { e.preventDefault(); handleEdit(event); }} p={6}>Edit</Button>
-              </Flex>
+              <Image src={event.image} alt="image" boxSize="300px" objectFit="cover" mb={2} mx="auto" borderRadius="md" />
+              <Box p={4}>
+                <Heading size="md" mb={2}>{event.title}</Heading>
+                <Text mb={2} fontWeight="bold">{event.description}</Text>
+                <Text mb={2} fontWeight="bold">Start Time: {new Date(event.startTime).toLocaleString()}</Text>
+                <Text mb={2} fontWeight="bold">End Time: {new Date(event.endTime).toLocaleString()}</Text>
+                <Text mb={2} fontWeight="bold">
+                  Category: {categories.find(cat => cat.id === event.category)?.name || 'Unknown'}
+                </Text>
+                <Flex justifyContent="center" mt={4}>
+                  <Button colorScheme="yellow" onClick={(e) => { e.preventDefault(); handleEdit(event); }} p={8}>Edit</Button>
+                </Flex>
+              </Box>
             </Box>
           </Link>
         ))}
@@ -243,8 +247,8 @@ export const EventsPage = () => {
                   </Select>
                 </FormControl>
                 <Flex justifyContent="center">
-                  <Button type="submit" colorScheme="blue" mr={2} p={6}>{isEdit ? 'Save Changes' : 'Submit'}</Button>
-                  <Button type="button" onClick={handleClose} p={6}>Close</Button>
+                  <Button type="submit" colorScheme="blue" mr={2} p={8}>{isEdit ? 'Save Changes' : 'Submit'}</Button>
+                  <Button type="button" onClick={handleClose} p={8}>Close</Button>
                 </Flex>
               </Stack>
             </form>
