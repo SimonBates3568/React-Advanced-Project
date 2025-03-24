@@ -1,24 +1,24 @@
 {
   "users": [
     {
-      "id": "1",
+      "id": 1,
       "name": "Michael Turner",
       "image": "https://wincacademy.github.io/webpages/media/person6.jpeg"
     },
     {
-      "id": "2",
+      "id": 2,
       "name": "Sophia Collins",
       "image": "https://wincacademy.github.io/webpages/media/article-author.png"
     },
-    {
-      "id": "3",
+	{
+      "id": 3,
       "name": "Emily Carter",
       "image": "https://wincacademy.github.io/webpages/media/person9.jpeg"
-    }
+	}
   ],
   "events": [
     {
-      "id": "1",
+      "id": 1,
       "createdBy": 1,
       "title": "Trampoline party",
       "description": "Bounce around with your friends",
@@ -31,7 +31,7 @@
       "endTime": "2023-03-10T19:00:00.000Z"
     },
     {
-      "id": "2",
+      "id": 2,
       "createdBy": 1,
       "title": "Laser Tag mania",
       "description": "Let's play laser tag!",
@@ -44,7 +44,7 @@
       "endTime": "2023-04-06T19:46"
     },
     {
-      "id": "3",
+      "id": 3,
       "createdBy": 2,
       "title": "Badminton game",
       "description": "Hit that shuttle!",
@@ -58,7 +58,7 @@
       "endTime": "2023-03-15T13:30:00.000Z"
     },
     {
-      "id": "4",
+      "id": 4,
       "createdBy": 2,
       "title": "Yoga",
       "description": "It's a bit of a stretch.",
@@ -71,17 +71,20 @@
       "endTime": "2023-03-09T07:00:00.000Z"
     },
     {
-      "title": "",
-      "description": "",
-      "image": "",
-      "startTime": "",
-      "endTime": "",
-      "categoryIds":[1],
-      "location": "",
-      "id": "5"
+      "id": 5,
+      "createdBy": 2,
+      "title": "Tennis",
+      "description": "Serving up fun on the court.",
+      "image": "https://wincacademy.github.io/webpages/media/pexels-floriandoppler-3207474.jpg",
+      "categoryIds": [
+        1
+      ],
+      "location": "Grand Slam Tennis Court",
+      "startTime": "2023-03-09T08:00:00.000Z",
+      "endTime": "2023-03-09T10:00:00.000Z"
     },
     {
-      "id": "6",
+      "id": 6,
       "createdBy": 5,
       "title": "Board games night",
       "description": "Roll the dice and join the fun!",
@@ -94,7 +97,7 @@
       "endTime": "2023-03-13T21:00:00.000Z"
     },
     {
-      "id": "7",
+      "id": 7,
       "createdBy": 2,
       "title": "Tea tasting",
       "description": "Savor the soothing flavors of herbal teas.",
@@ -107,7 +110,7 @@
       "endTime": "2023-03-17T17:00:00.000Z"
     },
     {
-      "id": "8",
+      "id": 8,
       "createdBy": 6,
       "title": "Nature walk",
       "description": "Connect with nature and clear your mind.",
@@ -119,41 +122,29 @@
       "startTime": "2023-03-16T07:00:00.000Z",
       "endTime": "2023-03-16T09:30:00.000Z"
     },
-    {
-      "id": "9",
+	{
+      "id": 9,
       "createdBy": 3,
       "title": "Bowling night",
       "description": "Strike up some fun with friends at the lanes!",
       "image": "https://wincacademy.github.io/webpages/media/pexels-rnnzeravac-9273055.jpg",
-      "categoryIds": [
-        2
-      ],
+      "categoryIds": [2],
       "location": "Downtown Bowling Alley",
       "startTime": "2023-03-19T18:00:00.000Z",
       "endTime": "2023-03-19T21:00:00.000Z"
-    },
-    {
-      "id": "ac7f",
-      "title": "",
-      "description": "",
-      "image": "",
-      "startTime": "",
-      "endTime": "",
-      "categoryIds": [1],
-      "location": ""
-    }
+  }
   ],
   "categories": [
     {
-      "name": "Sports",
+      "name": "sports",
       "id": 1
     },
     {
-      "name": "Games",
+      "name": "games",
       "id": 2
     },
     {
-      "name": "Relaxation",
+      "name": "relaxation",
       "id": 3
     }
   ]
