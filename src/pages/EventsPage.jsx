@@ -16,54 +16,50 @@ export const EventsPage = () => {
     image: '',
     startTime: '',
     endTime: '',
-    category: '',
+    categoryId: null,
     location: ''
   });
 
   const toast = useToast();
 
-  // fetch events
+  // fetch events and categories
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch('http://localhost:3001/events');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch events: ${response.statusText}`);
+        // Fetch categories
+        const categoriesResponse = await fetch('http://localhost:3001/categories');
+        if (!categoriesResponse.ok) {
+          throw new Error(`Failed to fetch categories: ${categoriesResponse.statusText}`);
         }
-        const data = await response.json();
-        setEvents(data);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-    }
-    fetchData();
-  }, []);
-
-  // fetch categories
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const response = await fetch('http://localhost:3001/categories');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch categories: ${response.statusText}`);
-        }
-        const data = await response.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setCategories(data);
+        const categoriesData = await categoriesResponse.json();
+        console.log('Fetched categories:', categoriesData); // Debugging
+        if (Array.isArray(categoriesData) && categoriesData.length > 0) {
+          setCategories(categoriesData);
+          console.log("catergories data", categoriesData); // Debugging
           setNewEvent((prevEvent) => ({
-            ...prevEvent,
-            category: prevEvent.category || data[0].id
+        ...prevEvent,
+        category: prevEvent.category || categoriesData[0].id
           }));
         } else {
           console.warn('No categories found or invalid response format.');
           setCategories([]);
         }
+
+        // Fetch events
+        const eventsResponse = await fetch('http://localhost:3001/events');
+        if (!eventsResponse.ok) {
+          throw new Error(`Failed to fetch events: ${eventsResponse.statusText}`);
+        }
+        const eventsData = await eventsResponse.json();
+        console.log('Fetched events:', eventsData); // Debugging
+        setEvents(eventsData);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching data:', error);
       }
     }
-    fetchCategories();
+    fetchData();
   }, []);
+
 
   // open and close modal
   const handleOpen = () => {
@@ -74,7 +70,7 @@ export const EventsPage = () => {
       image: '',
       startTime: '',
       endTime: '',
-      category: categories.length > 0 ? categories[0].id : '',
+      categoryId: categories.length > 0 ? categories[0].id : '',
       location: ''
     });
   };
@@ -114,13 +110,22 @@ export const EventsPage = () => {
   // handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const payload = {
+      title: newEvent.title,
+      description: newEvent.description,
+      image: newEvent.image,
+      startTime: newEvent.startTime,
+      endTime: newEvent.endTime,
+      categoryIds: [Number(newEvent.categoryId)],
+      location: newEvent.location
+    }
     if (isEdit) {
       const response = await fetch(`http://localhost:3001/events/${currentEventId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(newEvent)
+        body: JSON.stringify(payload)
       });
       const data = await response.json();
       setEvents((prevEvents) => prevEvents.map(event => event.id === currentEventId ? data : event));
@@ -130,7 +135,7 @@ export const EventsPage = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(newEvent)
+        body: JSON.stringify(payload)
       });
       const data = await response.json();
       setEvents((prevEvents) => [...prevEvents, data]);
@@ -146,26 +151,45 @@ export const EventsPage = () => {
   };
 
   // handle edit
-  const handleEdit = (event) => {
+  const handleEdit = (e) => {
     setIsEdit(true);
-    setCurrentEventId(event.id);
+    setCurrentEventId(e.id);
     setNewEvent({
-      title: event.title,
-      description: event.description,
-      image: event.image,
-      startTime: event.startTime,
-      endTime: event.endTime,
-      category: event.category
+      title: e.title,
+      description: e.description,
+      image: e.image,
+      startTime: e.startTime,
+      endTime: e.endTime,
+      categoryId: e.categoryIds.length > 0 ? e.categoryIds[0] : null,
+      location: e.location
     });
-    handleOpen();
+    console.log('help', e);
+    setIsOpen(true);
   };
 
-  // filter events
-  const filteredEvents = events.filter(event =>
-    (selectedCategory === 'All' || event.category === selectedCategory) &&
-    (event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  useEffect(() => {
+    const filtered = events
+     .filter(e => selectedCategory === 'All' || e.categoryIds?.includes(Number(selectedCategory)))
+     .filter(event =>
+       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    setFilteredEvents(filtered);
+  }, [events, searchQuery, selectedCategory]);
+
+
+
+
+  // console.log("categories", categories);
+  // console.log("events category id", events.map(event => event.categoryIds));
+
+
+  // const eventsCategoryIds = events.map(event => event.categoryIds);
+  // console.log("event category ids", eventsCategoryIds);
+  // const categoryIds = categories.map(category => category.id);
+  // console.log("category ids", categoryIds);
+
 
   // check if no events match the search query
   const noEventsMessage = filteredEvents.length === 0 ? 'No events match your search criteria.' : '';
@@ -180,12 +204,25 @@ export const EventsPage = () => {
           onChange={handleSearchChange}
           mr={4}
         />
-        <Select placeholder="Select category" value={selectedCategory} onChange={handleCategoryChange} mr={4}>
-          <option value="All">All</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>{category.name}</option>
-          ))}
-        </Select>
+        {/* DROPDOWN-START */}
+        {categories.length > 0 ? (
+          <Select placeholder="Select category" value={selectedCategory} onChange={handleCategoryChange} mr={4}>
+            {categories.length === 0 ? (
+              <option disabled>No categories available</option>
+            ) : (
+              <>
+                <option value="All">All</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
+              </>
+            )}
+          </Select>
+        ) : (
+          <Text>No categories available</Text>
+        )}
+        {/* DROPDOWN-FINISH */}
+        
         <Button colorScheme="teal" onClick={handleOpen} p={8}>Add Event</Button>
       </Flex>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} width="100%" maxWidth="1200px">
@@ -209,7 +246,9 @@ export const EventsPage = () => {
                 <Text mb={2} fontWeight="bold">Start Time: {new Date(event.startTime).toLocaleString()}</Text>
                 <Text mb={2} fontWeight="bold">End Time: {new Date(event.endTime).toLocaleString()}</Text>
                 <Text mb={2} fontWeight="bold">
-                  Category: {categories.find(cat => cat.id === event.category)?.name || 'Unknown'}
+                  Category: {
+                  event.categoryIds?.length > 0 ? categories.find(cat => cat.id === event.categoryIds[0])?.name : 'N/A'
+                  }
                 </Text>
                 <Flex justifyContent="center" mt={4}>
                   <Button colorScheme="yellow" onClick={(e) => { e.preventDefault(); handleEdit(event); }} p={8}>Edit</Button>
@@ -219,8 +258,11 @@ export const EventsPage = () => {
           </Link>
         ))}
       </SimpleGrid>
+
+      {/* No events message */}
       {noEventsMessage && <Text mt={4}>{noEventsMessage}</Text>}
-      
+
+      {/* EDITFORM */}
       {isOpen && (
         <Box className="popup" position="fixed" top="0" left="0" width="100%" height="100%" bg="rgba(0,0,0,0.5)" display="flex" justifyContent="center" alignItems="center">
           <Box className="popup-content" bg="white" p={6} borderRadius="md" boxShadow="lg" maxWidth="500px" width="100%">
@@ -253,7 +295,7 @@ export const EventsPage = () => {
                 </FormControl>
                 <FormControl>
                   <FormLabel>Category</FormLabel>
-                  <Select name="category" value={newEvent.category} onChange={handleChange}>
+                  <Select name="categoryId" value={newEvent.categoryId} onChange={handleChange}>
                     {categories.map((category) => (
                       <option key={category.id} value={category.id}>{category.name}</option>
                     ))}
